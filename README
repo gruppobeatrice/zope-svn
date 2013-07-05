@@ -1,0 +1,12 @@
+Tool e strumenti per la navigazione svn da zope
+
+- Subversion.py
+
+    questo file implementa funzioni da usare
+    come external methods all'interno di Zope.
+
+    Per essere utilizzato va copiato
+    all'interno della directory Extensions
+    dell'istanza desiderata (es. in un sistema
+    Debian l'istanza chiamata "default" si trova
+    in /var/lib/zope<versione>/instance/default)

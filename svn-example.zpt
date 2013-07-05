@@ -1,0 +1,57 @@
+<!--
+     Un esempio di utilizzo del codice di Subversion.py
+     Per usare le funzioni list e cat vengono creati due external
+     method
+
+     per domande e chiarimenti: fiorini [at] cli.di.unipi.it
+-->
+<html>
+  <head>
+    <title tal:content="template/title">The title</title>
+  </head>
+  <body tal:define="subpath python: request.get('traverse_subpath', '');
+                 completepath python: '/'.join(subpath);
+                 pathup python: '/'.join(['/'] + (request.get('traverse_subpath', [''])[:-1]));
+                 completeview python:context.svn_list(subpath='/'.join(subpath));
+                 view python:completeview[1:];">
+
+    <h1>
+    <span tal:replace="template/title">Portal title</span>
+    </h1>
+
+    <a href="" class="link-parent" tal:attributes="href string:$portal_url/${template/id}/$pathup"
+       tal:condition="pathup | nothing">
+    Vai su di un livello</a>
+
+    <div class="documentDescription" tal:content="string: ${template/description}">
+    Portal description
+    </div>
+    <p>Sei in: <a tal:repeat="sub request/traverse_subpath | nothing" tal:content="string:$sub/" /></p>
+    <table tal:condition="view">
+       <thead>
+         <tr>
+           <th>Nome</th>
+           <th>Dimensione</th>
+           <th>Ultima revisione</th>
+           <th>Ultimo autore</th>
+         </tr>
+       </thead>
+       <tbody>
+         <tr tal:repeat="item view">
+          <td><a href="" tal:attributes="href string:$portal_url/${template/id}${item/repos_path}"
+                 tal:define="name python:item['repos_path'].split('/').pop()"
+                 tal:content="name"/>
+          </td>
+          <td tal:content="item/size"/>
+          <td tal:content="python:DateTime(item['time'])"/>
+          <td><a href="" tal:attributes="href string:$portal_url/Members/${item/last_author}" tal:content="item/last_author"/>
+          </td>
+         </tr>
+       </tbody>
+    </table>
+    <div tal:condition="python:not view and completeview[0]['kind']=='file'">
+         <pre tal:content="data/read | nothing"
+              tal:define="data python:context.svn_export(url='svn://localhost/', subpath=completepath);"/>
+    </div>
+  </body>
+</html>
